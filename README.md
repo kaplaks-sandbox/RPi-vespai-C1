@@ -5,9 +5,7 @@
 The system is designed to run on a Raspberry Pi 5 with either a USB camera or a Raspberry Pi Camera Module.
 RPi-Vespai-C1 uses a YOLO26 deep learning trained model to identify and differentiate between Asian hornets (Vespa velutina) and European hornets (Vespa crabro) in real-time. 
 
-**Based on the research:** *VespAI: a deep learning-based system for the detection of invasive hornets* published in Communications Biology (2024). DOI: [10.1038/s42003-024-05979-z](https://doi.org/10.1038/s42003-024-05979-z)
 
-**Credits** This project is based on the work done by Jakob Zeise (https://github.com/jakobzeise/vespai/)
 
 
 ## ✨ Features
@@ -23,6 +21,7 @@ RPi-Vespai-C1 uses a YOLO26 deep learning trained model to identify and differen
 - 🏗️ **Modular Architecture**: Clean, maintainable codebase with separation of concerns
 
 ---
+# Screenshots
 
 ![Web UI Screenshot](docs/images/Web-UI-1.png)
 
@@ -94,6 +93,7 @@ See the TROUBLESHOOTING doc in the docs folder
 
 
 ## Citation
+**Based on the research:** *VespAI: a deep learning-based system for the detection of invasive hornets* published in Communications Biology (2024). DOI: [10.1038/s42003-024-05979-z](https://doi.org/10.1038/s42003-024-05979-z)
 
 If you use this project in your research or work, please cite the original research:
 
@@ -108,6 +108,8 @@ If you use this project in your research or work, please cite the original resea
   url={https://doi.org/10.1038/s42003-024-05979-z}
 }
 ```
+**Credits** This project is based on the work done by Jakob Zeise (https://github.com/jakobzeise/vespai/)
+
 
 ## License
 
@@ -115,16 +117,9 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 **Important:** This implementation is based on research published in Communications Biology. The original research methodology and concepts are attributed to the authors of the cited paper.
 
-## Acknowledgments
-
-- Original VespAI research published in Communications Biology (2024)
-- YOLO by Ultralytics
-- Lox24 SMS API
-- Flask web framework
-- OpenCV computer vision library
-
 ---
 # Special Thanks
 **Prof. Dr. Guido Salvanesch and the Swiss Cyber Institute**
-Thanks for all The AI Courses and inspiration
+Thanks for all the courses, classes, workshops and inspiration!
+
 
