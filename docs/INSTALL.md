@@ -1,4 +1,4 @@
-# RPi-Vespai-C1 Installation Guide
+# RPi-VespAI Installation Guide
 
 **Complete Setup Guide for VespAI Hornet Detection System**
 
@@ -23,8 +23,8 @@ git lfs install
 
 
 # Clone repository
-git clone https://github.com/jordaaaa1970/RPi-vespai-C1.git
-cd RPi-vespai-C1
+git clone https://github.com/kaplaks-sandbox/RPi-vespai.git
+cd RPi-vespai
 git lfs pull
 
 
@@ -140,12 +140,12 @@ Type=simple
 User=sysadmin
 Group=sysadmin
 PermissionsStartOnly=true
-WorkingDirectory=/home/sysadmin/RPi-vespai-C1
-ExecStartPre=/usr/bin/mkdir -p /home/sysadmin/RPi-vespai-C1/logs
-ExecStartPre=/usr/bin/touch /home/sysadmin/RPi-vespai-C1/logs/vespai.log
-ExecStartPre=/usr/bin/chown sysadmin:sysadmin /home/sysadmin/RPi-vespai-C1/logs/vespai.log
+WorkingDirectory=/home/sysadmin/RPi-vespai
+ExecStartPre=/usr/bin/mkdir -p /home/sysadmin/RPi-vespai/logs
+ExecStartPre=/usr/bin/touch /home/sysadmin/RPi-vespai/logs/vespai.log
+ExecStartPre=/usr/bin/chown sysadmin:sysadmin /home/sysadmin/RPi-vespai/logs/vespai.log
 Environment=PYTHONPATH=/usr/lib/python3/dist-packages
-ExecStart=/home/sysadmin/RPi-vespai-C1/start_vespai_web.sh --motion
+ExecStart=/home/sysadmin/RPi-vespai/start_vespai_web.sh --motion
 Restart=on-failure
 RestartSec=5
 Environment=PYTHONUNBUFFERED=1
