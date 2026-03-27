@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<!-- VespAI Dashboard Template
+     Author: Jakob Zeise (Zeise Digital) -->
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VespAI Monitor - Live Dashboard</title>
+
+    <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="/static/img/favicon-16.svg" sizes="16x16">
+    <link rel="apple-touch-icon" href="/static/img/favicon.svg" sizes="180x180">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css?t={{ timestamp }}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h1>VespAI Monitor</h1>
+            </div>
+
+            <div class="status-bar">
+                <div class="language-selector">
+                    <button class="lang-btn active" data-lang="en" title="English">
+                        <img src="/static/img/uk-flag.svg" alt="UK Flag" class="flag-img">
+                        <span class="lang-text">EN</span>
+                    </button>
+                    <button class="lang-btn" data-lang="de" title="Deutsch">
+                        <img src="/static/img/de-flag.svg" alt="German Flag" class="flag-img">
+                        <span class="lang-text">DE</span>
+                    </button>
+                    <button class="lang-btn" data-lang="fr" title="Français">
+                        <img src="/static/img/fr-flag.svg" alt="French Flag" class="flag-img">
+                        <span class="lang-text">FR</span>
+                    </button>
+                </div>
+                <div class="status-item">
+                    <div class="live-indicator" title="Web"></div>
+                    <span data-key="web">Web</span>
+                </div>
+                <div class="status-item">
+                    <div class="motion-indicator" id="motion-led" title="Motion Detection"></div>
+                    <span data-key="motion">Motion</span>
+                </div>
+                <div class="status-item">
+                    <div class="save-indicator" id="save-led" title="Save Detections"></div>
+                    <span data-key="save">Save</span>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-clock"></i>
+                    <span id="current-time"></span>
+                </div>
+                <div class="status-item compact-stat">
+                    <i class="fas fa-comment-dots"></i>
+                    <span data-key="sms-alerts">SMS Alerts</span>
+                    <strong id="sms-count-mini">0</strong>
+                </div>
+                <div class="status-item compact-stat">
+                    <i class="fas fa-euro-sign"></i>
+                    <span data-key="sms-costs">SMS Costs</span>
+                    <strong id="sms-cost-mini">0.00€</strong>
+                </div>
+                <a
+                    class="status-item repo-bee-link"
+                    href="https://github.com/jordaaaa1970/RPi-vespai-C1"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="RPi-vespai-C1 on GitHub"
+                    aria-label="Open RPi-vespai-C1 on GitHub"
+                >
+                    <span class="repo-bee-icon" aria-hidden="true">🐝</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Container -->
+    <div class="container">
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <!-- 1. Bilder Verarbeitet (Grün) -->
+            <div class="stat-card">
+                <div class="stat-value" style="color: #00ff88 !important;" id="frame-count">0</div>
+                <div class="stat-label" data-key="frames-processed">Frames Processed</div>
+                <div class="stat-detail">&nbsp;</div>
+            </div>
+
+            <!-- 2. Gesamt Erkennungen (Grün) -->
+            <div class="stat-card">
+                <div class="stat-value" style="color: #00ff88 !important;" id="total-detections">0</div>
+                <div class="stat-label" data-key="total-detections">Total Detections</div>
+                <div class="stat-detail" id="detection-rate">0<span data-key="per-hour">/h</span></div>
+            </div>
+
+            <!-- 3. Vespa Velutina (Rot) -->
+            <div class="stat-card">
+                <div class="stat-value" style="color: #ff0040 !important;" id="velutina-count">0</div>
+                <div class="stat-label" data-key="vespa-velutina">Vespa Velutina</div>
+                <div class="stat-detail" id="velutina-last">-</div>
+            </div>
+
+            <!-- 4. Vespa Crabro (Rot) -->
+            <div class="stat-card">
+                <div class="stat-value" style="color: #ffa500 !important;" id="crabro-count">0</div>
+                <div class="stat-label" data-key="vespa-crabro">Vespa Crabro</div>
+                <div class="stat-detail" id="crabro-last">-</div>
+            </div>
+
+            <!-- 5. Bee -->
+            <div class="stat-card">
+                <div class="stat-value" style="color: #00ff88 !important;" id="bee-count">0</div>
+                <div class="stat-label" data-key="bee-class">Bee</div>
+                <div class="stat-detail" id="bee-last">-</div>
+            </div>
+
+            <!-- 6. Unknown -->
+            <div class="stat-card">
+                <div class="stat-value" style="color: #00d4ff !important;" id="wasp-count">0</div>
+                <div class="stat-label" data-key="wasp-class">Unknown</div>
+                <div class="stat-detail" id="wasp-last">-</div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Video Container -->
+            <div class="video-container">
+                <div class="video-header">
+                    <h2 data-key="live-detection-feed">Live Detection Feed</h2>
+                    <div class="video-controls">
+                        <div class="fps-display">
+                            <i class="fas fa-chart-line"></i>
+                            <span id="fps">0 FPS</span>
+                        </div>
+                        <div class="quality-display">
+                            <i class="fas fa-sliders-h"></i>
+                            <span id="camera-quality">Q: max</span>
+                        </div>
+                        <button id="source-toggle" class="live-badge" type="button" title="Toggle input source">
+                            <span id="source-mode-text">LIVE</span>
+                        </button>
+                        <button class="fullscreen-btn" onclick="toggleFullscreen()">
+                            <i class="fas fa-expand"></i> <span data-key="fullscreen">Fullscreen</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="stat-detail" id="frame-source" style="margin: 0 0 0.75rem 0.2rem; color: #c7f9cc; font-size: 0.9rem;">
+                    Source: waiting...
+                </div>
+                <img src="/api/current_frame" alt="Live Feed" class="video-feed" id="video-feed">
+            </div>
+
+            <!-- Detection Log -->
+            <div class="detection-log">
+                <div class="log-header">
+                    <h3>
+                        <i class="fas fa-list"></i>
+                        <span data-key="detection-log">Detection Log</span>
+                        <span id="confidence-threshold-indicator" class="confidence-threshold-indicator">CONF 0.30</span>
+                    </h3>
+                </div>
+                <div class="log-content" id="log-content">
+                    <!-- Logs will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Hourly Chart -->
+        <div class="chart-card">
+            <h3 style="margin-bottom: 1rem;" id="chart-title">
+                <i class="fas fa-chart-bar" style="color: var(--honey);"></i> 
+                <span class="chart-title-text">Detections per Hour (Last 24h)</span>
+            </h3>
+            <div class="time-chart" id="hourly-chart">
+                <!-- Chart bars will be inserted here -->
+            </div>
+        </div>
+
+        <!-- System Info -->
+        <div class="system-info">
+            <div class="system-stat">
+                <div class="system-value" id="cpu-temp">0°C</div>
+                <div class="system-label" data-key="cpu-temp">CPU Temp</div>
+            </div>
+            <div class="system-stat">
+                <div class="system-value" id="cpu-usage">0%</div>
+                <div class="system-label" data-key="cpu-usage">CPU Usage</div>
+                <button class="insights-toggle insights-inline" id="insights-toggle" type="button" title="Insights">
+                    <i class="fas fa-chart-pie"></i>
+                    <span data-key="insights">Insights</span>
+                </button>
+            </div>
+            <div class="system-stat">
+                <div class="system-value" id="ram-usage">0%</div>
+                <div class="system-label" data-key="ram-usage">RAM Usage</div>
+            </div>
+            <div class="system-stat">
+                <div class="system-value" id="uptime-sys">0h 0m</div>
+                <div class="system-label" data-key="uptime">Uptime</div>
+            </div>
+        </div>
+
+        <div class="chart-card insights-panel" id="insights-panel" hidden>
+            <h3 style="margin-bottom: 1rem;" id="insights-title">
+                <i class="fas fa-chart-pie" style="color: var(--warning);"></i>
+                <span data-key="perf-breakdown-title">Performance Breakdown</span>
+            </h3>
+            <div class="inference-meta-line inference-summary-line" style="margin-top: 0;">
+                <span data-key="rolling-window">Rolling Window</span>
+                <strong id="perf-window-seconds">0s</strong>
+                <span data-key="samples">Samples</span>
+                <strong id="perf-window-samples">0</strong>
+            </div>
+            <div class="perf-stack" id="perf-stack" aria-label="Performance section percentages">
+                <div class="perf-segment capture" id="perf-segment-capture" style="width: 0%">0%</div>
+                <div class="perf-segment inference" id="perf-segment-inference" style="width: 0%">0%</div>
+                <div class="perf-segment postprocess" id="perf-segment-postprocess" style="width: 0%">0%</div>
+                <div class="perf-segment web" id="perf-segment-web" style="width: 0%">0%</div>
+            </div>
+            <div class="perf-metrics-grid">
+                <div class="perf-metric">
+                    <div class="perf-metric-label" data-key="capture">Capture</div>
+                    <div class="perf-metric-value" id="perf-capture-pct">0.0%</div>
+                    <div class="perf-metric-sub" id="perf-capture-ms">0 ms</div>
+                </div>
+                <div class="perf-metric">
+                    <div class="perf-metric-label" data-key="inference">Inference</div>
+                    <div class="perf-metric-value" id="perf-inference-pct">0.0%</div>
+                    <div class="perf-metric-sub" id="perf-inference-ms">0 ms</div>
+                </div>
+                <div class="perf-metric">
+                    <div class="perf-metric-label" data-key="postprocess">Postprocess</div>
+                    <div class="perf-metric-value" id="perf-postprocess-pct">0.0%</div>
+                    <div class="perf-metric-sub" id="perf-postprocess-ms">0 ms</div>
+                </div>
+                <div class="perf-metric">
+                    <div class="perf-metric-label" data-key="web">Web</div>
+                    <div class="perf-metric-value" id="perf-web-pct">0.0%</div>
+                    <div class="perf-metric-sub" id="perf-web-ms">0 ms</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-card inference-card">
+            <h3 style="margin-bottom: 1rem;" id="inference-chart-title">
+                <i class="fas fa-tachometer-alt" style="color: var(--info);"></i>
+                <span data-key="inference-chart-title">Recent Inference Time per Image</span>
+            </h3>
+            <div class="inference-meta-line">
+                <span data-key="cpu-temp-inline">CPU Temp</span>
+                <strong id="inference-cpu-temp">0°C</strong>
+            </div>
+            <div class="inference-meta-line inference-summary-line">
+                <span data-key="inference-avg-inline">Avg</span>
+                <strong id="inference-avg">0 ms</strong>
+                <span data-key="inference-min-inline">Min</span>
+                <strong id="inference-min">0 ms</strong>
+                <span data-key="inference-max-inline">Max</span>
+                <strong id="inference-max">0 ms</strong>
+            </div>
+            <div class="inference-chart-wrap">
+                <div class="inference-y-axis" id="inference-y-axis">
+                    <!-- Inference timing scale will be inserted here -->
+                </div>
+                <div class="inference-chart" id="inference-chart">
+                    <!-- Inference timing bars will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/dashboard.js?t={{ timestamp }}"></script>
+    <script>
+    // Update motion and save LEDs based on /api/stats
+    function updateLeds(stats) {
+        const motionLed = document.getElementById('motion-led');
+        const saveLed = document.getElementById('save-led');
+        if (motionLed) {
+            if (stats.enable_motion_detection) {
+                motionLed.style.background = '#00ff88';
+                motionLed.style.boxShadow = '0 0 8px #00ff88';
+            } else {
+                motionLed.style.background = '#444';
+                motionLed.style.boxShadow = 'none';
+            }
+        }
+        if (saveLed) {
+            if (stats.save_detections) {
+                saveLed.style.background = '#ffa500';
+                saveLed.style.boxShadow = '0 0 8px #ffa500';
+            } else {
+                saveLed.style.background = '#444';
+                saveLed.style.boxShadow = 'none';
+            }
+        }
+    }
+    // Patch dashboard.js fetchStats to call updateLeds
+    (function() {
+        const origFetchStats = window.fetchStats;
+        window.fetchStats = function() {
+            return origFetchStats.apply(this, arguments).then(stats => {
+                updateLeds(stats);
+                return stats;
+            });
+        };
+    })();
+    </script>
+</body>
+    <!-- Footer: Model Info -->
+    <footer style="width:100%;text-align:center;padding:12px 0 8px 0;font-size:1.05em;color:#888;background:rgba(0,0,0,0.04);margin-top:32px;">
+        <span>Model loaded:</span>
+        <strong>{{ model_name or 'Unknown' }}</strong>
+    </footer>
+</body>
+</html>

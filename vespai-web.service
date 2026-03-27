@@ -1,0 +1,21 @@
+[Unit]
+Description=VespAI Web Dashboard
+After=network.target
+
+[Service]
+Type=simple
+PermissionsStartOnly=true
+User=sysadmin
+Group=sysadmin
+WorkingDirectory=/home/sysadmin/RPi-vespai-C1
+ExecStartPre=/usr/bin/mkdir -p /home/sysadmin/RPi-vespai-C1/logs
+ExecStartPre=/usr/bin/touch /home/sysadmin/RPi-vespai-C1/logs/vespai.log
+ExecStartPre=/usr/bin/chown sysadmin:sysadmin /home/sysadmin/RPi-vespai-C1/logs/vespai.log
+Environment=PYTHONPATH=/usr/lib/python3/dist-packages
+ExecStart=/home/sysadmin/RPi-vespai-C1/start_vespai_web.sh --motion
+Restart=on-failure
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

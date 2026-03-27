@@ -1,0 +1,4 @@
+/monitor/detections
+__pycache__
+/logs
+.env

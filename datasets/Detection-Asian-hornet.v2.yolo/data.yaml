@@ -1,0 +1,9 @@
+names:
+  0: Unknown
+  1: Bee
+  2: Vespa-Crabro
+  3: Vespa-Velutina
+path: E:\Git-Repository\MyAI-Projects\AAJ-PT-GPU-WIN\datasets\Detection-Asian-hornet.v2.yolo
+test: images/test
+train: images/train
+val: images/val
