@@ -2,3 +2,5 @@
 __pycache__
 /logs
 .env
+.venv
+/datasets/Detection-Asian-hornet.v2.yolo
