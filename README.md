@@ -10,15 +10,15 @@ RPi-Vespai-C1 uses a YOLO26 deep learning trained model to identify and differen
 
 ## ✨ Features
 
-- 🔍 **Real-time Detection**: YOLO26-based computer vision with custom hornet model
+- 🔍 **Real-time Detection**: YOLO26-based computer vision model used with custom vesp detection training
 - 📊 **Web Dashboard**: Live video feed with statistics and detection analytics
 - 🌍 **Multilingual Support**: Complete English/German/French interface with flag-based switching
 - 📱 **SMS Alerts**: Automated notifications via Lox24 API with intelligent rate limiting - To be Tested
 - 🎯 **Motion Detection**: CPU-efficient motion-based optimization
 - 📈 **Data Analytics**: Comprehensive logging, hourly statistics, and detection history
-- 📱 **Mobile Responsive**: Optimized web interface with adaptive charts (24h/4h views)
+- 📱 **Mobile Responsive**: Optimized web interface 
 - ⚡ **Performance Optimized**: Non-blocking operations, data caching, reduced API calls
-- 🏗️ **Modular Architecture**: Clean, maintainable codebase with separation of concerns
+
 
 ---
 # Screenshots
@@ -39,23 +39,25 @@ The Raspberry Pi Camera Module 3 is supported through Picamera2 while preserving
 
 - ✅ **Raspberry Pi 5** (full support)
 - **Memory**: 2GB RAM minimum, 4GB recommended
-- **Storage**: 1GB free space for models and dependencies
+- **Storage**: 1GB free space for models and dependencies, SSD Recommended
 - **Camera**: USB camera or CSI camera (Raspberry Pi)
 
-The installation is based on PyTorch and the installation process will install all the required dependencies
+The installation is based on PyTorch and the installation process will install all the required dependencies - ideally using uv.
 - **Python**: 3.7+ (3.9+ recommended for Raspberry Pi)  
 - The system was developed on Python 3.13 as the default with the Debian distro.
 
 
 ### 2. Installation
 Refer to the Install.md doc under the docs folder
-
+Scripts provided to install as a service, autostart on boot.
+Various variables stored in .env file (use .env-template)
 
 ### 3. Access Dashboard
 Once Installed and running, open your browser to: `http://localhost:8081`
 or replace localhost with the IP address if the RPi.
 
-PS: To get a **demo**: Click on the Red Live button in the Live Feed. This will change the feed from Camera to the Dataset, streaming images from the dataset into the detector with results then logged as if running live.
+#### Demo mode
+To get a **demo**: Click on the Red Live button in the Live Feed. This will change the feed from Camera to the Dataset, streaming images from the dataset into the detector with results then logged as if running live.
 
 - **Live Video Feed**: Real-time camera stream with detection overlays
 - **Statistics Cards**: Frame count, detection counts, system stats
@@ -75,16 +77,18 @@ PS: To get a **demo**: Click on the Red Live button in the Live Feed. This will 
 # Performance Optimization
 - Use motion detection (`--motion`) to reduce CPU usage
 - Adjust confidence threshold based on your environment
-- Consider GPU acceleration for better performance (if on a PC)
 - Monitor system resources via dashboard
-- Moving from a YOLOv8 Model to YOLO26 reduced the inference time taken from 2700ms down to around 1700ms using a USB Webcam and down to <500ms using the Pi Camera Module 3
+- Heatsink with Fan highly recommended
+- Moving from a YOLOv8 Model to YOLO26 reduced the inference time taken from 2700ms down to around 1700ms using a USB Webcam and down to <500ms using the Pi Camera Module 3.
+- Using the ONNX format further improved and lowered inference time and improved detection box placement
 
 
 ## Testing
 - Test with various lighting conditions
-- Verify SMS delivery and costs
 - Check web interface on mobile devices
 - Validate motion detection accuracy
+- Startup/Shutdown process
+- Capacity/space management: Max logs and images saved as set in .env
 
 ---
 
