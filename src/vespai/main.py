@@ -285,15 +285,14 @@ class VespAIApplication:
         self.current_dataset_path = video_file or configured_dataset_path or ''
 
     def _normalize_dataset_path(self, path_value: Any) -> str:
-        """Normalize dataset path strings and require an absolute path."""
+        """Normalize dataset path strings, supporting both absolute and project-relative paths."""
         raw_value = str(path_value or '').strip().strip('"').strip("'")
         if not raw_value:
             return ''
 
         candidate = Path(raw_value).expanduser()
         if not candidate.is_absolute():
-            logger.warning("Dataset path must be absolute. Ignoring relative value: %s", raw_value)
-            return ''
+            candidate = (PROJECT_ROOT / candidate).resolve()
 
         return str(candidate)
 
