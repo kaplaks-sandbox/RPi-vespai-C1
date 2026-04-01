@@ -1739,6 +1739,7 @@ class DetectionProcessor:
             "last_crabro_time": None,
             "last_wasp_time": None,
             "start_time": datetime.datetime.now(),
+            "push_sent": 0,
             "detection_log": deque(maxlen=20),
             "detection_frames": {},
             "inference_timing_recent": deque(maxlen=20),

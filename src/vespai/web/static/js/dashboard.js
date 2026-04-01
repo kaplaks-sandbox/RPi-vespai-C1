@@ -12,6 +12,7 @@ const translations = {
         'bee-class': 'Bee',
         'wasp-class': 'Unknown',
         'sms-alerts': 'SMS Alerts',
+        'push-alerts': 'Push Alerts',
         'sms-costs': 'SMS Costs',
         'live-detection-feed': 'Live Detection Feed',
         'fullscreen': 'Fullscreen',
@@ -62,6 +63,7 @@ const translations = {
         'bee-class': 'Biene',
         'wasp-class': 'Unbekannt',
         'sms-alerts': 'SMS Warnungen',
+        'push-alerts': 'Push Warnungen',
         'sms-costs': 'SMS Kosten',
         'live-detection-feed': 'Live Erkennungs-Feed',
         'fullscreen': 'Vollbild',
@@ -112,6 +114,7 @@ const translations = {
         'bee-class': 'Abeille',
         'wasp-class': 'Inconnu',
         'sms-alerts': 'Alertes SMS',
+        'push-alerts': 'Alertes Push',
         'sms-costs': 'Coûts SMS',
         'live-detection-feed': 'Flux de détection en direct',
         'fullscreen': 'Plein écran',
@@ -667,6 +670,7 @@ function updateStats() {
             updateValue('wasp-count', data.total_wasp || 0);
             updateValue('total-detections', data.total_detections || 0);
             updateValue('sms-count-mini', data.sms_sent || 0);
+            updateValue('push-count-mini', data.push_sent || 0);
             
             // Update SMS cost
             if (data.sms_cost !== undefined) {

@@ -408,6 +408,7 @@ def register_routes(app, stats, hourly_detections, app_instance):
         
         # Add missing fields with defaults if not present
         response_data.setdefault("sms_sent", 0)
+        response_data.setdefault("push_sent", 0)
         response_data.setdefault("sms_cost", 0.0)
         response_data.setdefault("saved_images", 0)
         response_data.setdefault("last_sms_time", None)

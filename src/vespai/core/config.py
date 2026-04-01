@@ -90,8 +90,16 @@ class VespAIConfig:
             'enable_sms': False,
             'lox24_api_key': '',
             'phone_number': '',
-            'lox24_sender': 'VespAI',
+            'lox24_sender': os.getenv('VESPAI_NAME', 'VespAI'),
             'sms_delay_minutes': 5,
+
+            # Pushover settings (disabled by default, use --push to enable)
+            'enable_push': False,
+            'pushover_token': '',
+            'pushover_user': '',
+            'pushover_sender': os.getenv('VESPAI_NAME', 'VespAI'),
+            'push_delay_minutes': 5,
+
             'domain_name': 'localhost',
             'use_https': False,
         }
@@ -240,6 +248,11 @@ class VespAIConfig:
             'PHONE_NUMBER': 'phone_number',
             'LOX24_SENDER': 'lox24_sender',
             'SMS_DELAY_MINUTES': 'sms_delay_minutes',
+            'ENABLE_PUSH': 'enable_push',
+            'PUSHOVER_TOKEN': 'pushover_token',
+            'PUSHOVER_USER': 'pushover_user',
+            'PUSHOVER_SENDER': 'pushover_sender',
+            'PUSH_DELAY_MINUTES': 'push_delay_minutes',
             'DOMAIN_NAME': 'domain_name',
             'USE_HTTPS': 'use_https',
         }
@@ -416,6 +429,16 @@ class VespAIConfig:
                           action='store_true',
                           default=False,
                           help='Disable SMS alerts')
+
+        # Pushover alerts
+        parser.add_argument('--push',
+                  action='store_true',
+                  default=False,
+                  help='Enable Pushover alerts (requires PUSHOVER_TOKEN and PUSHOVER_USER)')
+        parser.add_argument('--no-push',
+                  action='store_true',
+                  default=False,
+                  help='Disable Pushover alerts')
         
         # Parse arguments
         parsed_args = parser.parse_args(args)
@@ -476,6 +499,11 @@ class VespAIConfig:
         elif hasattr(args, 'no_sms') and args.no_sms:
             self.config['enable_sms'] = False
 
+        if hasattr(args, 'push') and args.push:
+            self.config['enable_push'] = True
+        elif hasattr(args, 'no_push') and args.no_push:
+            self.config['enable_push'] = False
+
         if hasattr(args, 'no_camera_autofocus') and args.no_camera_autofocus:
             self.config['camera_autofocus'] = False
     
@@ -526,6 +554,21 @@ class VespAIConfig:
             'phone_number': self.config['phone_number'],
             'sender_name': self.config['lox24_sender'],
             'delay_minutes': self.config['sms_delay_minutes'],
+        }
+
+    def get_push_config(self) -> Dict[str, Any]:
+        """
+        Get Pushover configuration dictionary.
+
+        Returns:
+            Dictionary with Pushover configuration
+        """
+        return {
+            'enabled': self.config['enable_push'],
+            'token': self.config['pushover_token'],
+            'user': self.config['pushover_user'],
+            'sender_name': self.config['pushover_sender'],
+            'delay_minutes': self.config['push_delay_minutes'],
         }
     
     def get_web_config(self) -> Dict[str, Any]:
@@ -709,6 +752,10 @@ class VespAIConfig:
         print(f"SMS alerts: {self.config['enable_sms']}")
         if self.config['enable_sms'] and self.config['lox24_api_key']:
             print(f"SMS delay: {self.config['sms_delay_minutes']} minutes")
+
+        print(f"Pushover alerts: {self.config['enable_push']}")
+        if self.config['enable_push'] and self.config['pushover_token']:
+            print(f"Pushover delay: {self.config['push_delay_minutes']} minutes")
         
         print("="*60 + "\n")
 

@@ -24,6 +24,7 @@ from collections import deque
 from .core.config import create_config_from_args
 from .core.detection import CameraManager, ModelManager, DetectionProcessor
 from .sms.lox24 import create_sms_manager_from_env
+from .push_notification.pushover import create_push_manager_from_env
 from .web.routes import register_routes
 
 # External dependencies
@@ -91,6 +92,7 @@ class VespAIApplication:
         self.model_manager = None
         self.detection_processor = None
         self.sms_manager = None
+        self.push_manager = None
         self.flask_app = None
         self.web_thread = None
         self.running = False
@@ -208,6 +210,7 @@ class VespAIApplication:
         self._initialize_model()
         self._initialize_detection_processor()
         self._initialize_sms()
+        self._initialize_push()
         
         if self.config.get('enable_web'):
             self._initialize_web_interface()
@@ -463,6 +466,18 @@ class VespAIApplication:
                 logger.warning("SMS configuration incomplete - alerts disabled")
         else:
             logger.info("SMS alerts disabled")
+
+    def _initialize_push(self):
+        """Initialize push notification manager."""
+        if self.config.get('enable_push'):
+            logger.info("Initializing push alerts...")
+            self.push_manager = create_push_manager_from_env()
+            if self.push_manager:
+                logger.info("Push alerts enabled")
+            else:
+                logger.warning("Push configuration incomplete - alerts disabled")
+        else:
+            logger.info("Push alerts disabled")
     
     def _initialize_web_interface(self):
         """Initialize Flask web interface."""
@@ -817,6 +832,10 @@ class VespAIApplication:
         # Send SMS alert if configured
         if self.sms_manager:
             self._send_sms_alert(velutina_count, crabro_count, frame_id)
+
+        # Send push alert if configured
+        if self.push_manager:
+            self._send_push_alert(velutina_count, crabro_count, frame_id)
     
     def _save_detection_image(self, frame, frame_id: int, velutina: int, crabro: int):
         """Save detection image to disk."""
@@ -922,6 +941,33 @@ class VespAIApplication:
             logger.info("SMS alert sent: %s", status)
         else:
             logger.warning("SMS alert failed: %s", status)
+
+    def _send_push_alert(self, velutina_count: int, crabro_count: int, frame_id: int):
+        """Send push alert for detection."""
+        if not self.push_manager:
+            return
+
+        web_config = self.config.get_web_config()
+        current_time = time.strftime('%H%M%S')
+        detection_key = f"{frame_id}_{current_time}"
+        frame_url = f"{web_config['public_url']}/frame/{detection_key}"
+
+        if velutina_count > 0:
+            hornet_type = 'velutina'
+            count = velutina_count
+        else:
+            hornet_type = 'crabro'
+            count = crabro_count
+
+        confidence = self.detection_processor.stats.get('confidence_avg', 0)
+        message = self.push_manager.create_hornet_alert(hornet_type, count, confidence, frame_url)
+
+        success, status = self.push_manager.send_alert(message)
+        if success:
+            self.detection_processor.stats['push_sent'] = int(self.detection_processor.stats.get('push_sent', 0)) + 1
+            logger.info("Push alert sent: %s", status)
+        else:
+            logger.warning("Push alert failed: %s", status)
     
     def _validate_initialization(self) -> bool:
         """Validate that all required components are initialized."""
