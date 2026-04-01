@@ -1,6 +1,6 @@
 // VespAI Dashboard JavaScript
 // Author: Jakob Zeise (Zeise Digital)
-
+// Modified: Andre Jordaan
 // Translations
 const translations = {
     en: {

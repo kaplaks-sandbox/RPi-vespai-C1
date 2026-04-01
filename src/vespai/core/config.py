@@ -6,7 +6,8 @@ Handles all configuration management including environment variables,
 command line arguments, and default settings.
 
 Author: Jakob Zeise (Zeise Digital)
-Version: 1.0
+Modified: Andre Jordaan
+Version: 2.0
 """
 
 import os
@@ -90,19 +91,18 @@ class VespAIConfig:
             'enable_sms': False,
             'lox24_api_key': '',
             'phone_number': '',
-            'lox24_sender': os.getenv('VESPAI_NAME', 'VespAI'),
+            'lox24_sender': os.getenv('VESPAI_NAME', 'VespAI-C1'),
             'sms_delay_minutes': 5,
-
+            'domain_name': 'localhost',
+            'use_https': False,
+            
             # Pushover settings (disabled by default, use --push to enable)
             'enable_push': False,
             'pushover_token': '',
             'pushover_user': '',
-            'pushover_sender': os.getenv('VESPAI_NAME', 'VespAI'),
+            'pushover_sender': os.getenv('VESPAI_NAME', 'VespAI-C1'),
             'push_delay_minutes': 5,
             'push_thumbnail': False,
-
-            'domain_name': 'localhost',
-            'use_https': False,
         }
         
         # Current configuration (will be populated from env + args)

@@ -22,7 +22,8 @@ Routes:
 - GET /api/frames: List all available detection frames
 
 Author: Jakob Zeise (Zeise Digital)
-Version: 1.0
+Modified: Andre Jordaan
+Version: 2.0
 """
 
 import cv2

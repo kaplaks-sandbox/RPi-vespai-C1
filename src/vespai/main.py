@@ -6,7 +6,8 @@ Modular main application that coordinates all VespAI components for hornet detec
 This replaces the monolithic web_preview.py with a clean, testable architecture.
 
 Author: Jakob Zeise (Zeise Digital)
-Version: 1.0
+Modified: Andre Jordaan
+Version: 2.0
 """
 
 import logging

@@ -3,10 +3,11 @@
 VespAI Core Detection Module
 
 This module contains the main detection logic for hornet identification
-using YOLOv5 computer vision models.
+using YOLO computer vision models.
 
 Author: Jakob Zeise (Zeise Digital)
-Version: 1.0
+Modified: Andre Jordaan
+Version: 2.0
 """
 
 import cv2
