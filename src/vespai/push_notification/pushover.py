@@ -70,13 +70,14 @@ class PushoverMessage:
             self.username = ""
             self.password = api_key
 
-    def send_push(self, to: str, message: str) -> Tuple[bool, float]:
+    def send_push(self, to: str, message: str, attachment: Optional[bytes] = None) -> Tuple[bool, float]:
         """
         Send a push notification via the Pushover API.
         
         Args:
             to (str): Recipient identifier (e.g., Pushover user key)
             message (str): Push notification content
+            attachment (Optional[bytes]): Optional JPEG bytes to attach as image thumbnail
             
         Returns:
             Tuple[bool, float]: (success, cost) - Success status and message cost in EUR
@@ -93,13 +94,20 @@ class PushoverMessage:
             data = {
                 "user": to,
                 "token": self.api_key,
+                "title": self.sender_name,
                 "message": message,
             }
 
             logger.debug("Push notification payload: %s", json.dumps(data, indent=4))
 
             # Send request with 100 second timeout
-            response = requests.post(url, data=data, timeout=100)
+            if attachment:
+                files = {
+                    'attachment': ('thumbnail.jpg', attachment, 'image/jpeg'),
+                }
+                response = requests.post(url, data=data, files=files, timeout=100)
+            else:
+                response = requests.post(url, data=data, timeout=100)
             
             if response.status_code != 200:  # OK
                 error_msg = self._handle_error_response(response)
@@ -209,13 +217,14 @@ class PushManager:
             self.client = None
             logger.warning("Push notifications not configured - alerts disabled")
     
-    def send_alert(self, message: str, force: bool = False) -> Tuple[bool, str]:
+    def send_alert(self, message: str, force: bool = False, attachment: Optional[bytes] = None) -> Tuple[bool, str]:
         """
         Send a push notification alert with rate limiting.
         
         Args:
             message (str): Alert message to send
             force (bool): Whether to bypass rate limiting
+            attachment (Optional[bytes]): Optional JPEG bytes to attach as image thumbnail
             
         Returns:
             Tuple[bool, str]: (success, status_message)
@@ -239,7 +248,7 @@ class PushManager:
                 return False, f"Rate limited - next push notification allowed in {remaining:.1f} minutes"
         
         # Send the push notification
-        success, cost = self.client.send_push(self.phone_number, message)
+        success, cost = self.client.send_push(self.phone_number, message, attachment=attachment)
         
         if success:
             self.last_push_time = datetime.datetime.now()
@@ -307,7 +316,7 @@ def create_push_manager_from_env() -> Optional[PushManager]:
     """
     api_key = os.getenv("PUSHOVER_TOKEN", "")
     phone_number = os.getenv("PUSHOVER_USER", "")
-    sender_name = os.getenv("PUSHOVER_SENDER", "VespAI")
+    sender_name = os.getenv("PUSHOVER_SENDER", os.getenv("VESPAI_NAME", "VespAI"))
     delay_minutes = int(os.getenv("PUSH_DELAY_MINUTES", "5"))
     enabled = os.getenv("ENABLE_PUSH", "true").lower() == "true"
     

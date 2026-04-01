@@ -99,6 +99,7 @@ class VespAIConfig:
             'pushover_user': '',
             'pushover_sender': os.getenv('VESPAI_NAME', 'VespAI'),
             'push_delay_minutes': 5,
+            'push_thumbnail': False,
 
             'domain_name': 'localhost',
             'use_https': False,
@@ -253,6 +254,7 @@ class VespAIConfig:
             'PUSHOVER_USER': 'pushover_user',
             'PUSHOVER_SENDER': 'pushover_sender',
             'PUSH_DELAY_MINUTES': 'push_delay_minutes',
+            'PUSH_THUMBNAIL': 'push_thumbnail',
             'DOMAIN_NAME': 'domain_name',
             'USE_HTTPS': 'use_https',
         }
@@ -569,6 +571,7 @@ class VespAIConfig:
             'user': self.config['pushover_user'],
             'sender_name': self.config['pushover_sender'],
             'delay_minutes': self.config['push_delay_minutes'],
+            'thumbnail': self.config['push_thumbnail'],
         }
     
     def get_web_config(self) -> Dict[str, Any]:
@@ -756,6 +759,7 @@ class VespAIConfig:
         print(f"Pushover alerts: {self.config['enable_push']}")
         if self.config['enable_push'] and self.config['pushover_token']:
             print(f"Pushover delay: {self.config['push_delay_minutes']} minutes")
+            print(f"Pushover thumbnail: {self.config['push_thumbnail']}")
         
         print("="*60 + "\n")
 
